@@ -559,17 +559,6 @@ static inline struct sugov_tunables *to_sugov_tunables(struct gov_attr_set *attr
 	return container_of(attr_set, struct sugov_tunables, attr_set);
 }
 
-<<<<<<< HEAD
-static ssize_t rate_limit_us_show(struct gov_attr_set *attr_set, char *buf)
-{
-	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
-
-	return sprintf(buf, "%u\n", tunables->rate_limit_us);
-}
-
-static ssize_t rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf,
-				   size_t count)
-=======
 static DEFINE_MUTEX(min_rate_lock);
 
 static void update_min_rate_limit_us(struct sugov_policy *sg_policy)
@@ -616,7 +605,6 @@ static ssize_t up_rate_limit_us_store(struct gov_attr_set *attr_set,
 
 static ssize_t down_rate_limit_us_store(struct gov_attr_set *attr_set,
 					const char *buf, size_t count)
->>>>>>> e92ec6571ff7... SCHEDUTIL: Add back up/down_rate_limit_us
 {
 	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
 	struct sugov_policy *sg_policy;
@@ -627,15 +615,10 @@ static ssize_t down_rate_limit_us_store(struct gov_attr_set *attr_set,
 
 	tunables->rate_limit_us = rate_limit_us;
 
-<<<<<<< HEAD
-	list_for_each_entry(sg_policy, &attr_set->policy_list, tunables_hook)
-		sg_policy->freq_update_delay_ns = rate_limit_us * NSEC_PER_USEC;
-=======
 	list_for_each_entry(sg_policy, &attr_set->policy_list, tunables_hook) {
 		sg_policy->down_rate_delay_ns = rate_limit_us * NSEC_PER_USEC;
 		update_min_rate_limit_us(sg_policy);
 	}
->>>>>>> e92ec6571ff7... SCHEDUTIL: Add back up/down_rate_limit_us
 
 	return count;
 }
@@ -857,17 +840,12 @@ static void sugov_tunables_restore(struct cpufreq_policy *policy)
 	tunables->pl = cached->pl;
 	tunables->hispeed_load = cached->hispeed_load;
 	tunables->hispeed_freq = cached->hispeed_freq;
-<<<<<<< HEAD
-	tunables->rate_limit_us = cached->rate_limit_us;
-	sg_policy->freq_update_delay_ns =
-		tunables->rate_limit_us * NSEC_PER_USEC;
-=======
 	tunables->up_rate_limit_us = cached->up_rate_limit_us;
 	tunables->down_rate_limit_us = cached->down_rate_limit_us;
 	sg_policy->up_rate_delay_ns = cached->up_rate_limit_us;
 	sg_policy->down_rate_delay_ns = cached->down_rate_limit_us;
 	update_min_rate_limit_us(sg_policy);
->>>>>>> e92ec6571ff7... SCHEDUTIL: Add back up/down_rate_limit_us
+
 }
 
 static int sugov_init(struct cpufreq_policy *policy)
@@ -913,14 +891,6 @@ static int sugov_init(struct cpufreq_policy *policy)
 		goto stop_kthread;
 	}
 
-<<<<<<< HEAD
-	tunables->rate_limit_us = LATENCY_MULTIPLIER;
-	tunables->hispeed_load = DEFAULT_HISPEED_LOAD;
-	tunables->hispeed_freq = 0;
-	lat = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
-	if (lat)
-		tunables->rate_limit_us *= lat;
-=======
 	tunables->up_rate_limit_us = LATENCY_MULTIPLIER;
 	tunables->down_rate_limit_us = LATENCY_MULTIPLIER;
 	tunables->hispeed_load = DEFAULT_HISPEED_LOAD;
@@ -930,7 +900,6 @@ static int sugov_init(struct cpufreq_policy *policy)
 		tunables->up_rate_limit_us *= lat;
 		tunables->down_rate_limit_us *= lat;
 	}
->>>>>>> e92ec6571ff7... SCHEDUTIL: Add back up/down_rate_limit_us
 
 	policy->governor_data = sg_policy;
 	sg_policy->tunables = tunables;
@@ -994,15 +963,11 @@ static int sugov_start(struct cpufreq_policy *policy)
 	struct sugov_policy *sg_policy = policy->governor_data;
 	unsigned int cpu;
 
-<<<<<<< HEAD
-	sg_policy->freq_update_delay_ns = sg_policy->tunables->rate_limit_us * NSEC_PER_USEC;
-=======
 	sg_policy->up_rate_delay_ns =
 		sg_policy->tunables->up_rate_limit_us * NSEC_PER_USEC;
 	sg_policy->down_rate_delay_ns =
 		sg_policy->tunables->down_rate_limit_us * NSEC_PER_USEC;
 	update_min_rate_limit_us(sg_policy);
->>>>>>> e92ec6571ff7... SCHEDUTIL: Add back up/down_rate_limit_us
 	sg_policy->last_freq_update_time = 0;
 	sg_policy->next_freq = UINT_MAX;
 	sg_policy->work_in_progress = false;
