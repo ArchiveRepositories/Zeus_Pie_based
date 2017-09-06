@@ -424,12 +424,12 @@ out:
 	return err;
 }
 
-static unsigned long get_entry_bdev(struct zram *zram)
+/*static unsigned long get_entry_bdev(struct zram *zram)
 {
 	unsigned long entry;
 
 	spin_lock(&zram->bitmap_lock);
-	/* skip 0 bit to confuse zram.handle = 0 */
+	// skip 0 bit to confuse zram.handle = 0 
 	entry = find_next_zero_bit(zram->bitmap, zram->nr_pages, 1);
 	if (entry == zram->nr_pages) {
 		spin_unlock(&zram->bitmap_lock);
@@ -440,9 +440,9 @@ static unsigned long get_entry_bdev(struct zram *zram)
 	spin_unlock(&zram->bitmap_lock);
 
 	return entry;
-}
+}*/
 
-static void put_entry_bdev(struct zram *zram, unsigned long entry)
+/*static void put_entry_bdev(struct zram *zram, unsigned long entry)
 {
 	int was_set;
 
@@ -450,7 +450,7 @@ static void put_entry_bdev(struct zram *zram, unsigned long entry)
 	was_set = test_and_clear_bit(entry, zram->bitmap);
 	spin_unlock(&zram->bitmap_lock);
 	WARN_ON_ONCE(!was_set);
-}
+}*/
 
 #else
 static bool zram_wb_enabled(struct zram *zram) { return false; }
@@ -779,7 +779,7 @@ out:
 
 static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec, u32 index)
 {
-	int ret;
+	int ret = 0;
 	unsigned long alloced_pages;
 	unsigned long handle = 0;
 	unsigned int comp_len = 0;
@@ -885,7 +885,7 @@ out:
 
 	/* Update stats */
 	atomic64_inc(&zram->stats.pages_stored);
-	return 0;
+	return ret;
 }
 
 static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
@@ -967,6 +967,11 @@ static void zram_bio_discard(struct zram *zram, u32 index,
 	}
 }
 
+/*
+ * Returns errno if it has some problem. Otherwise return 0 or 1.
+ * Returns 0 if IO request was done synchronously
+ * Returns 1 if IO request was successfully submitted.
+ */
 static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
 			int offset, bool is_write)
 {
@@ -988,7 +993,7 @@ static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
 
 	generic_end_io_acct(rw_acct, &zram->disk->part0, start_time);
 
-	if (unlikely(ret)) {
+	if (unlikely(ret < 0)) {
 		if (!is_write)
 			atomic64_inc(&zram->stats.failed_reads);
 		else
@@ -1077,7 +1082,7 @@ static void zram_slot_free_notify(struct block_device *bdev,
 static int zram_rw_page(struct block_device *bdev, sector_t sector,
 		       struct page *page, bool is_write)
 {
-	int offset, err = -EIO;
+	int offset, ret;
 	u32 index;
 	struct zram *zram;
 	struct bio_vec bv;
@@ -1086,7 +1091,7 @@ static int zram_rw_page(struct block_device *bdev, sector_t sector,
 
 	if (!valid_io_request(zram, sector, PAGE_SIZE)) {
 		atomic64_inc(&zram->stats.invalid_io);
-		err = -EINVAL;
+		ret = -EINVAL;
 		goto out;
 	}
 
@@ -1097,7 +1102,7 @@ static int zram_rw_page(struct block_device *bdev, sector_t sector,
 	bv.bv_len = PAGE_SIZE;
 	bv.bv_offset = 0;
 
-	err = zram_bvec_rw(zram, &bv, index, offset, is_write);
+	ret = zram_bvec_rw(zram, &bv, index, offset, is_write);
 out:
 	/*
 	 * If I/O fails, just return error(ie, non-zero) without
@@ -1107,9 +1112,20 @@ out:
 	 * bio->bi_end_io does things to handle the error
 	 * (e.g., SetPageError, set_page_dirty and extra works).
 	 */
-	if (err == 0)
+	if (unlikely(ret < 0))
+		return ret;
+
+	switch (ret) {
+	case 0:
 		page_endio(page, is_write, 0);
-	return err;
+		break;
+	case 1:
+		ret = 0;
+		break;
+	default:
+		WARN_ON(1);
+	}
+	return ret;
 }
 
 static void zram_reset_device(struct zram *zram)
