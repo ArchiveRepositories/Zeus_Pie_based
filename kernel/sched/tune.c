@@ -230,6 +230,9 @@ struct schedtune {
 	 * the value when Dynamic SchedTune Boost is reset.
 	 */
 	int boost_default;
+
+	/* Dynamic boost value for tasks on that SchedTune CGroup */
+	int dynamic_boost;
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 };
 
@@ -272,6 +275,7 @@ root_schedtune = {
 	.prefer_idle = 0,
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	.boost_default = 0,
+	.dynamic_boost = 0,
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 };
 
@@ -884,6 +888,65 @@ boost_write(struct cgroup_subsys_state *css, struct cftype *cft,
 	return 0;
 }
 
+#ifdef CONFIG_STUNE_ASSIST
+#ifdef CONFIG_SCHED_WALT
+static int sched_boost_override_write_wrapper(struct cgroup_subsys_state *css,
+					      struct cftype *cft, u64 override)
+{
+	if (task_is_booster(current))
+		return 0;
+
+	return sched_boost_override_write(css, cft, override);
+}
+
+static int sched_colocate_write_wrapper(struct cgroup_subsys_state *css,
+					struct cftype *cft, u64 colocate)
+{
+	if (task_is_booster(current))
+		return 0;
+
+	return sched_colocate_write(css, cft, colocate);
+}
+#endif
+
+static int boost_write_wrapper(struct cgroup_subsys_state *css,
+			       struct cftype *cft, s64 boost)
+{
+	if (task_is_booster(current))
+		return 0;
+
+	return boost_write(css, cft, boost);
+}
+
+static int prefer_idle_write_wrapper(struct cgroup_subsys_state *css,
+				     struct cftype *cft, u64 prefer_idle)
+{
+	if (task_is_booster(current))
+		return 0;
+
+	return prefer_idle_write(css, cft, prefer_idle);
+}
+#endif
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST
+static s64
+dynamic_boost_read(struct cgroup_subsys_state *css, struct cftype *cft)
+{
+	struct schedtune *st = css_st(css);
+
+	return st->dynamic_boost;
+}
+
+static int
+dynamic_boost_write(struct cgroup_subsys_state *css, struct cftype *cft,
+	    s64 dynamic_boost)
+{
+	struct schedtune *st = css_st(css);
+	st->dynamic_boost = dynamic_boost;
+
+	return 0;
+}
+#endif // CONFIG_DYNAMIC_STUNE_BOOST
+
 static struct cftype files[] = {
 #ifdef CONFIG_SCHED_WALT
 	{
@@ -912,6 +975,13 @@ static struct cftype files[] = {
 		.read_u64 = prefer_idle_read,
 		.write_u64 = prefer_idle_write,
 	},
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST
+	{
+		.name = "dynamic_boost",
+		.read_s64 = dynamic_boost_read,
+		.write_s64 = dynamic_boost_write,
+	},
+#endif // CONFIG_DYNAMIC_STUNE_BOOST
 	{ }	/* terminate */
 };
 
