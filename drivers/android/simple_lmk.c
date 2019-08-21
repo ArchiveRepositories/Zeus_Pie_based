@@ -264,7 +264,7 @@ static int simple_lmk_reclaim_thread(void *data)
 	sched_setscheduler_nocheck(current, SCHED_FIFO, &sched_max_rt_prio);
 
 	while (1) {
-		wait_event(oom_waitq, atomic_read(&needs_reclaim));
+		wait_event(oom_waitq, READ_ONCE(needs_reclaim));
 
 		/*
 		 * Kill a batch of processes and wait for their memory to be
