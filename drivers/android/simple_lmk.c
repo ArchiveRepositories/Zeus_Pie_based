@@ -264,7 +264,7 @@ static int simple_lmk_reclaim_thread(void *data)
 	sched_setscheduler_nocheck(current, SCHED_FIFO, &sched_max_rt_prio);
 
 	while (1) {
-		wait_event(oom_waitq, READ_ONCE(needs_reclaim));
+		wait_event(oom_waitq, atomic_read(&needs_reclaim));
 
 		/*
 		 * Kill a batch of processes and wait for their memory to be
@@ -318,7 +318,6 @@ void simple_lmk_mm_freed(struct mm_struct *mm)
 static int simple_lmk_init_set(const char *val, const struct kernel_param *kp)
 {
 	static atomic_t init_done = ATOMIC_INIT(0);
-	struct sysinfo i;
 	struct task_struct *thread;
 
 	if (atomic_cmpxchg(&init_done, 0, 1))
