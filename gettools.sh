@@ -16,3 +16,8 @@ git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/
 # Clone AnyKernel3
 git clone https://github.com/rama982/AnyKernel3 -b onc-miui
 
+#Download Clang
+wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r6/clang-4691093.tar.gz
+mkdir -p clang/clang-4691093/
+tar xvzf clang-4691093.tar.gz -C clang/clang-4691093
+rm clang-4691093.tar.gz
