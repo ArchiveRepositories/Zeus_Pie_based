@@ -4278,6 +4278,7 @@ static int dwc3_msm_gadget_vbus_draw(struct dwc3_msm *mdwc, unsigned int mA)
 	union power_supply_propval pval = {0};
 	int ret, psy_type;
 
+	dev_info(mdwc->dev,"dwc3_msm_gadget_vbus_draw %u\n",mA);
 	psy_type = get_psy_type(mdwc);
 	if (psy_type == POWER_SUPPLY_TYPE_USB_FLOAT) {
 		if (!mA)

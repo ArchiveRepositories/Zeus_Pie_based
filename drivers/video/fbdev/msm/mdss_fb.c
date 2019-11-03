@@ -1519,6 +1519,46 @@ static ssize_t mdss_fb_set_cabc_still(struct device *dev,struct device_attribute
 
 	mdss_dsi_set_gamma(ctrl,param);
 
+
+	gamma_state=param;
+
+	if(param>9){
+		gamma_resume=true;
+		return len;
+	}
+
+	ctl = mfd_to_ctl(mfd);
+	if(!ctl) {
+		pr_debug("%s,Display is off\n",__func__);
+		return len;
+	}
+
+	if (ctl->power_state!=1) {
+		pr_debug("%s,Dsi is not power on\n",__func__);
+		return len;
+	}
+
+	if(first_gamma_state ){
+		first_gamma_state=false;
+		pr_err("%s,first gamma set\n",__func__);
+		return len;
+	}
+
+	if(!first_set_bl){
+		pr_err("%s,wait first_set_bl\n",__func__);
+		return len;
+	}
+
+	pr_err("%s,set_gamma_cmd: %d\n",__func__, param);
+
+	if(gamma_resume){
+		pr_err("%s abandon gamma cmd from app set\n",__func__);
+		gamma_resume=false;
+		return len;
+	}
+
+	mdss_dsi_set_gamma(ctrl,param);
+
 	printk(" ##### gamma over ###\n");
 	return len;
 }*/
@@ -4490,9 +4530,14 @@ static int __mdss_fb_display_thread(void *data)
 				mfd->index);
 
 	while (1) {
-		wait_event(mfd->commit_wait_q,
+		ret = wait_event_interruptible(mfd->commit_wait_q,
 				(atomic_read(&mfd->commits_pending) ||
 				 kthread_should_stop()));
+
+		if (ret) {
+			pr_info("%s: interrupted", __func__);
+			continue;
+		}
 
 		if (kthread_should_stop())
 			break;

@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2009  Red Hat, Inc.
+ *  Copyright (C) 2019 XiaoMi, Inc.
  *
  *  This work is licensed under the terms of the GNU GPL, version 2. See
  *  the COPYING file in the top-level directory.
@@ -1492,7 +1493,7 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
 			flush_tlb_range(vma, old_addr, old_addr + PMD_SIZE);
 		if (new_ptl != old_ptl)
 			spin_unlock(new_ptl);
-		spin_unlock(old_ptl);
+s		spin_unlock(old_ptl);
 		return true;
 	}
 	return false;

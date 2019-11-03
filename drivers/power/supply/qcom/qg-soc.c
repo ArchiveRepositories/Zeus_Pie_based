@@ -1,4 +1,5 @@
 /* Copyright (c) 2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -146,7 +147,6 @@ static bool is_scaling_required(struct qpnp_qg *chip)
 	if (chip->catch_up_soc == chip->msoc)
 		/* SOC has not changed */
 		return false;
-
 
 	if (chip->catch_up_soc > chip->msoc && !is_usb_present(chip))
 		/* USB is not present and SOC has increased */

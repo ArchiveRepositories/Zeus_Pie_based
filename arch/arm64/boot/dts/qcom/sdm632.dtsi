@@ -1030,8 +1030,13 @@
 /* GPU Overrides*/
 &msm_gpu {
 
+<<<<<<< HEAD
 	qcom,ca-target-pwrlevel = <7>;
 	qcom,initial-pwrlevel = <9>;
+=======
+	qcom,ca-target-pwrlevel = <4>;
+	qcom,initial-pwrlevel = <7>;
+>>>>>>> 1c845a0cf94df70c1653cabaa5f71450db1c3871
 	/delete-node/qcom,gpu-pwrlevels;
 
 	/* Power levels */
@@ -1121,7 +1126,7 @@
 		/* XO */
 		qcom,gpu-pwrlevel@9 {
 			reg = <9>;
-			qcom,gpu-freq = <10000000>;
+			qcom,gpu-freq = <19200000>;
 			qcom,bus-freq = <0>;
 			qcom,bus-min = <0>;
 			qcom,bus-max = <0>;

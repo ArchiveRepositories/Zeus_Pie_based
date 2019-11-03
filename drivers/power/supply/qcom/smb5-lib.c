@@ -1,4 +1,5 @@
 /* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -46,6 +47,7 @@
 	((typec_mode == POWER_SUPPLY_TYPEC_SOURCE_MEDIUM	\
 	|| typec_mode == POWER_SUPPLY_TYPEC_SOURCE_HIGH)	\
 	&& !chg->typec_legacy)
+
 
 int smblib_read(struct smb_charger *chg, u16 addr, u8 *val)
 {
@@ -4447,6 +4449,7 @@ static void jeita_update_work(struct work_struct *work)
 			goto out;
 		}
 	}
+
 
 	rc = of_property_read_u32_array(pnode, "qcom,jeita-soft-thresholds",
 				jeita_thresholds, 2);
