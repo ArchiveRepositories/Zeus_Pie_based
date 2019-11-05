@@ -121,6 +121,11 @@ kernel/configs/android-*.cfg
 
 # Don't track content of these folders
 AnyKernel3
+clang
+stock
+stock_32
+out
+AnyKernel3
 stock
 stock_32
 clang
