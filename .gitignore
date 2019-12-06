@@ -120,8 +120,8 @@ all.config
 kernel/configs/android-*.cfg
 
 # Don't track content of these folders
-AnyKernel_miui
-AnyKernel_aosp
+AnyKernel_MIUI
+AnyKernel_AOSP
 clang
 stock
 stock_32

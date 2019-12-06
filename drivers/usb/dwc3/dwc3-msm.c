@@ -55,6 +55,9 @@
 #include "debug.h"
 #include "xhci.h"
 
+#define DWC3_IDEV_CHG_MAX 3000
+#define DWC3_HVDCP_CHG_MAX 3000
+
 #define SDP_CONNETION_CHECK_TIME 10000 /* in ms */
 
 /* time out to wait for USB cable status notification (in ms)*/
