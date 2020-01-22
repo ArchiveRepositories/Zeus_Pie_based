@@ -7,7 +7,7 @@
 # Main environtment
 KERNEL_DIR=$PWD
 KERN_IMG=$KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb
-ZIP_DIR=$KERNEL_DIR/AnyKernel_AOSP
+ZIP_DIR=$KERNEL_DIR/AnyKernel3
 CONFIG=onclite-aosp_defconfig
 CROSS_COMPILE="aarch64-linux-android-"
 CROSS_COMPILE_ARM32="arm-linux-androideabi-"
@@ -38,7 +38,7 @@ cd ..
 # For MIUI Build
 # Credit Adek Maulana <adek@techdro.id>
 OUTDIR="$KERNEL_DIR/out/"
-VENDOR_MODULEDIR="$KERNEL_DIR/AnyKernel_AOSP/modules/vendor/lib/modules"
+VENDOR_MODULEDIR="$KERNEL_DIR/AnyKernel3/modules/vendor/lib/modules"
 STRIP="$KERNEL_DIR/stock/bin/$(echo "$(find "$KERNEL_DIR/stock/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
             sed -e 's/gcc/strip/')"
 for MODULES in $(find "${OUTDIR}" -name '*.ko'); do
