@@ -842,10 +842,7 @@ static int snd_compr_partial_drain(struct snd_compr_stream *stream)
 {
 	int retval;
 
-<<<<<<< HEAD
-=======
 	mutex_lock(&stream->device->lock);
->>>>>>> 6e401b322df573c0d084253af44e2376dabfbbcc
 	switch (stream->runtime->state) {
 	case SNDRV_PCM_STATE_OPEN:
 	case SNDRV_PCM_STATE_SETUP:

@@ -10,14 +10,16 @@ sudo apt install bc bash git-core gnupg build-essential \
     m4 gcc libtool zlib1g-dev flex bison libssl-dev
 
 # Clone toolchain
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 --depth=1 stock
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 --depth=1 stock_32
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r20 --depth=1 stock
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r20 --depth=1 stock_32
 
 # Clone AnyKernel3
 git clone https://github.com/ragy365/AnyKernel3.git
 
 #Download Clang
-wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r50/clang-4691093.tar.gz
-mkdir -p clang/clang-4691093/
-tar xvzf clang-4691093.tar.gz -C clang/clang-4691093
-rm clang-4691093.tar.gz
+if [ ! -d clang ]; then
+    wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-10.0.0_r20/clang-r353983c.tar.gz
+    mkdir -p clang/clang-r353983c/
+    tar xvzf clang-r353983c.tar.gz -C clang/clang-r353983c
+    rm clang-r353983c.tar.gz
+fi

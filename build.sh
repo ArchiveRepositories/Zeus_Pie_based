@@ -8,10 +8,10 @@
 KERNEL_DIR=$PWD
 KERN_IMG=$KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb
 ZIP_DIR=$KERNEL_DIR/AnyKernel3
-CONFIG=onclite-aosp_defconfig
+CONFIG=onclite_defconfig
 CROSS_COMPILE="aarch64-linux-android-"
 CROSS_COMPILE_ARM32="arm-linux-androideabi-"
-PATH=:"${KERNEL_DIR}/clang/clang-4691093/bin:${PATH}:${KERNEL_DIR}/stock/bin:${PATH}:${KERNEL_DIR}/stock_32/bin:${PATH}"
+PATH=:"${KERNEL_DIR}/clang/clang-r353983c/bin:${PATH}:${KERNEL_DIR}/stock/bin:${PATH}:${KERNEL_DIR}/stock_32/bin:${PATH}"
 
 # Export
 export ARCH=arm64
@@ -48,13 +48,8 @@ for MODULES in $(find "${OUTDIR}" -name '*.ko'); do
             "${OUTDIR}/certs/signing_key.x509" \
             "${MODULES}"
     find "${OUTDIR}" -name '*.ko' -exec cp {} "${VENDOR_MODULEDIR}" \;
-    case ${MODULES} in
-            */wlan.ko)
-        cp "${MODULES}" "${VENDOR_MODULEDIR}/pronto_wlan.ko" ;;
-    esac
 done
 echo -e "\n(i) Done moving modules"
-rm "${VENDOR_MODULEDIR}/wlan.ko"
 
 cd $ZIP_DIR
 cp $KERN_IMG zImage
