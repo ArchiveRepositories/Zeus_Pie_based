@@ -250,29 +250,6 @@ static void klapse_pulse(unsigned long data)
       restart_timer();
 }
 
-// Brightness-based mode
-void set_rgb_slider(u32 bl_lvl)
-{
-  if (bl_lvl >= MIN_BRIGHTNESS)
-  {
-    if ((enable_klapse == 2) && (bl_lvl <= MAX_BRIGHTNESS))
-    {
-      if (bl_lvl > backlight_upper)
-        set_rgb_brightness(daytime_r, daytime_g, daytime_b);
-      else if (bl_lvl <= backlight_lower)
-        set_rgb_brightness(target_r, target_g, target_b);
-      else {
-        current_r = daytime_r - ((daytime_r - target_r)*(backlight_upper - bl_lvl)/(backlight_upper - backlight_lower));
-        current_g = daytime_g - ((daytime_g - target_g)*(backlight_upper - bl_lvl)/(backlight_upper - backlight_lower));
-        current_b = daytime_b - ((daytime_b - target_b)*(backlight_upper - bl_lvl)/(backlight_upper - backlight_lower));
-        set_rgb_brightness(current_r, current_g, current_b);
-      }
-    }
-  
-    last_bl = bl_lvl;
-  }
-}
-
 static void set_enable_klapse(int val)
 {
     if ((val <= 2) && (val >= 0))
