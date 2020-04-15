@@ -37,6 +37,10 @@ endif
 # This should work on most of the modern platforms
 KBUILD_DEFCONFIG := multi_v7_defconfig
 
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS += -Wa,-mno-warn-deprecated
+endif
+
 # defines filename extension depending memory management type.
 ifeq ($(CONFIG_MMU),)
 MMUEXT		:= -nommu
