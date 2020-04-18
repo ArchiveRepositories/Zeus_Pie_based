@@ -227,7 +227,7 @@ static int regulator_check_voltage(struct regulator_dev *rdev,
 	/* check if requested voltage range actually overlaps the constraints */
 	if (*max_uV < rdev->constraints->min_uV ||
 	    *min_uV > rdev->constraints->max_uV) {
-		rdev_err(rdev, "requested voltage range [%d, %d] does not fit within constraints: [%d, %d]\n",
+		rdev_dbg(rdev, "requested voltage range [%d, %d] does not fit within constraints: [%d, %d]\n",
 			*min_uV, *max_uV, rdev->constraints->min_uV,
 			rdev->constraints->max_uV);
 		return -EINVAL;
