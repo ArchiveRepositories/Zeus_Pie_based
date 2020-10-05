@@ -734,13 +734,9 @@ static int spidev_release(struct inode *inode, struct file *filp)
 	if (!spidev->users) {
 
 
-/*
 		kfree(spidev->tx_buffer);
 		spidev->tx_buffer = NULL;
 
-		kfree(spidev->rx_buffer);
-		spidev->rx_buffer = NULL;
-*/
 
 		if (dofree)
 			kfree(spidev);
