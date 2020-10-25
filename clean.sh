@@ -8,3 +8,5 @@ make clean
 make mrproper
 cd AnyKernel3
 make clean
+cd ..
+rm -rf out
