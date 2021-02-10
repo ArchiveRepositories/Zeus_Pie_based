@@ -36,7 +36,7 @@ _ksetup_vars+=(
 )
 
 kmake_flags+=(
-	CC="clang"
+	CC="ccache clang"
 	AR="llvm-ar"
 	NM="llvm-nm"
 	OBJCOPY="llvm-objcopy"
