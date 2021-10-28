@@ -10,9 +10,6 @@
 #
 # Copyright (C) 1995-2001 by Russell King
 
-# Ensure linker flags are correct
-LDFLAGS		:=
-
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 export DTC_FLAGS := -@
 endif
@@ -33,8 +30,16 @@ GZFLAGS		:=-9
 # Never generate .eh_frame
 KBUILD_CFLAGS	+= $(call cc-option,-fno-dwarf2-cfi-asm)
 
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, vectorizer-no-neon)
+endif
+
 # This should work on most of the modern platforms
 KBUILD_DEFCONFIG := multi_v7_defconfig
+
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS += -Wa,-mno-warn-deprecated
+endif
 
 # defines filename extension depending memory management type.
 ifeq ($(CONFIG_MMU),)
@@ -49,11 +54,11 @@ endif
 ifeq ($(CONFIG_CPU_BIG_ENDIAN),y)
 KBUILD_CPPFLAGS	+= -mbig-endian
 AS		+= -EB
-LD		+= -EB
+KBUILD_LDFLAGS	+= -EB
 else
 KBUILD_CPPFLAGS	+= -mlittle-endian
 AS		+= -EL
-LD		+= -EL
+KBUILD_LDFLAGS	+= -EL
 endif
 
 #

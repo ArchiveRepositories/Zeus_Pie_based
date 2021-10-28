@@ -171,7 +171,7 @@ a_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
 cpp_flags      = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
 		 $(__cpp_flags)
 
-ld_flags       = $(LDFLAGS) $(ldflags-y)
+ld_flags       = $(KBUILD_LDFLAGS) $(ldflags-y)
 
 dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
 		 -I$(srctree)/arch/$(SRCARCH)/boot/dts                   \
@@ -258,7 +258,7 @@ $(obj)/%: $(src)/%_shipped
 # ---------------------------------------------------------------------------
 
 quiet_cmd_ld = LD      $@
-cmd_ld = $(LD) $(LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F)) \
+cmd_ld = $(LD) $(KBUILD_LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F)) \
 	       $(filter-out FORCE,$^) -o $@
 
 # Objcopy
@@ -305,6 +305,16 @@ endif
 ifeq ($(KBUILD_ENABLE_EXTRA_GCC_CHECKS),2)
 DTC_FLAGS += -Wnode_name_chars_strict \
 	-Wproperty_name_chars_strict
+endif
+
+ifneq ($(DTC_EXT),)
+ifeq ($(KBUILD_ENABLE_EXTRA_GCC_CHECKS),)
+DTC_FLAGS += -Wno-graph_port \
+	-Wno-i2c_bus_bridge \
+	-Wno-graph_child_address \
+	-Wno-spi_bus_bridge \
+	-Wno-alias_paths
+endif
 endif
 
 # Generate an assembly file to wrap the output of the device tree compiler
